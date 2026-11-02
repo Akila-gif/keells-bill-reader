@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Keells Bill Reader</title>
+<meta name="description" content="Reads your Keells Nexus e-bills from the screen. Everything is read on your device; nothing is uploaded.">
+<meta name="theme-color" content="#0b7a3e">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand">
+    <img src="icons/icon.svg" alt="" width="34" height="34">
+    <div>
+      <h1>Keells Bill Reader</h1>
+      <p class="sub">Reads your Nexus e-bills straight from the screen</p>
+    </div>
+  </div>
+  <span class="pill ok" title="The bill is read by this browser. No picture or bill leaves this device.">On-device · nothing uploaded</span>
+</header>
+
+<main>
+  <section class="card" id="readCard">
+    <!-- Desktop browsers: watch the screen live -->
+    <div id="liveIntro" hidden>
+      <h2>Watch the screen</h2>
+      <ol class="steps">
+        <li>Show the bill on this computer: mirror your phone (for example with 3uAirPlayer or AirPlay), or open the e-bill here.</li>
+        <li>Press <b>Start screen monitor</b> and choose the window that shows the bill.</li>
+        <li>Open the bill in the Keells Nexus app and <b>scroll slowly to the end</b>, pausing on each screenful.</li>
+      </ol>
+      <div class="actions">
+        <button class="btn primary" id="startLive">Start screen monitor</button>
+        <button class="btn" id="stopLive" hidden>Stop</button>
+        <label class="btn ghost file">Read a recording or screenshots<input type="file" class="pick" accept="video/*,image/*" multiple></label>
+      </div>
+    </div>
+
+    <!-- Phones and tablets: read a screen recording -->
+    <div id="fileIntro" hidden>
+      <h2>Read a bill from a screen recording</h2>
+      <p class="muted">Phones don't let a website watch other apps, so record the screen while you scroll the bill, then open the recording here. It is read on this phone.</p>
+      <ol class="steps" id="phoneSteps"></ol>
+      <div class="actions">
+        <label class="btn primary file">Choose the recording<input type="file" class="pick" accept="video/*,image/*" multiple></label>
+      </div>
+      <p class="muted small">Screenshots work too: take one for each part of the bill and choose them all.</p>
+    </div>
+
+    <div id="stage" class="stage" hidden>
+      <video id="liveVideo" muted playsinline></video>
+      <div id="areaBox" class="area" hidden></div>
+    </div>
+    <p id="stageHint" class="muted small" hidden>The bill is found automatically. If the window shows other things too, drag on the picture to mark where the bill is. <a href="#" id="clearArea" hidden>Clear the marked area</a></p>
+
+    <div id="fileRun" hidden>
+      <div class="bar"><i id="fileBar"></i></div>
+      <div class="row"><span id="fileText" class="muted"></span><button class="btn small" id="stopFiles">Stop</button></div>
+    </div>
+
+    <p id="status" class="status" role="status" aria-live="polite"></p>
+    <p id="engine" class="muted small"></p>
+  </section>
+
+  <section class="card progress" id="progress" hidden>
+    <div class="row">
+      <h3 id="pTitle">Reading the bill...</h3>
+      <span id="pFrames" class="muted small"></span>
+    </div>
+    <div class="bar"><i id="pBar"></i></div>
+    <p id="pText"></p>
+    <p id="pHint" class="hint"></p>
+  </section>
+
+  <section class="card result" id="result" hidden aria-live="polite">
+    <div class="result-head">
+      <span class="tick" aria-hidden="true">&#10003;</span>
+      <div>
+        <h2 id="rTitle">Keells bill read</h2>
+        <p id="rSub" class="muted"></p>
+      </div>
+    </div>
+    <dl class="facts" id="rFacts"></dl>
+    <p id="rCheck" class="check"></p>
+    <details id="rItemsBox">
+      <summary id="rItemsSum">Items</summary>
+      <div class="table-wrap"><table class="items"><thead><tr><th>#</th><th>Item</th><th class="num">Price</th><th class="num">Qty</th><th class="num">Amount</th></tr></thead><tbody id="rItems"></tbody></table></div>
+    </details>
+  </section>
+
+  <section class="card" id="billsCard">
+    <div class="row">
+      <h2>Your bills <span id="billCount" class="muted"></span></h2>
+      <div class="actions tight">
+        <button class="btn small" id="downloadCsv" disabled>Download CSV</button>
+        <button class="btn small ghost" id="clearBills" disabled>Clear</button>
+      </div>
+    </div>
+    <p class="muted small">Kept in this browser only. The CSV has the same columns as keells_ebill_items.csv.</p>
+    <div id="bills"></div>
+  </section>
+</main>
+
+<footer class="foot muted small">Pictures are read by Tesseract OCR running in your browser. Bills are saved only on this device.</footer>
+
+<div id="toast" class="toast" role="alert" hidden></div>
+
+<script src="vendor/tesseract/tesseract.min.js"></script>
+<script src="bill-reader.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
